@@ -1,79 +1,142 @@
 import React, { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { X, ChevronLeft, ChevronRight, Camera } from 'lucide-react'
+import { X, Heart, Share2, Download, ZoomIn, Filter } from 'lucide-react'
 
 const Gallery = () => {
   const [selectedImage, setSelectedImage] = useState(null)
-  const [currentIndex, setCurrentIndex] = useState(0)
+  const [activeFilter, setActiveFilter] = useState('all')
+  const [favorites, setFavorites] = useState([])
 
-  const galleryItems = [
+  const filters = [
+    { id: 'all', name: 'الكل', en: 'All' },
+    { id: 'food', name: 'الأطباق', en: 'Food' },
+    { id: 'restaurant', name: 'المطعم', en: 'Restaurant' },
+    { id: 'events', name: 'المناسبات', en: 'Events' }
+  ]
+
+  const galleryImages = [
     {
       id: 1,
-      emoji: '🥘',
-      title: 'أطباق شرقية أصيلة',
-      description: 'تشكيلة من الأطباق التراثية المحضرة بعناية',
-      category: 'أطباق رئيسية'
+      src: 'https://images.unsplash.com/photo-1574484284002-952d92456975?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+      alt: 'طبق مندي لحم شهي',
+      category: 'food',
+      title: 'مندي لحم أصيل',
+      description: 'لحم ضاني طري مع أرز بالزعفران'
     },
     {
       id: 2,
-      emoji: '🍖',
-      title: 'لحوم مشوية فاخرة',
-      description: 'أجود أنواع اللحوم المشوية على الفحم',
-      category: 'شوي'
+      src: 'https://images.unsplash.com/photo-1569718212165-3a8278d5f624?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+      alt: 'أرز مندي بالدجاج',
+      category: 'food',
+      title: 'مندي دجاج طازج',
+      description: 'دجاج مشوي مع الأرز العطر'
     },
     {
       id: 3,
-      emoji: '🥗',
-      title: 'سلطات طازجة',
-      description: 'خضار ورقية طازجة مع صلصات مميزة',
-      category: 'سلطات'
+      src: 'https://images.unsplash.com/photo-1603496987351-f84a3ba5ec85?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+      alt: 'مشاوي طازجة',
+      category: 'food',
+      title: 'مشاوي مشكلة',
+      description: 'تشكيلة كباب ولحم مشوي'
     },
     {
       id: 4,
-      emoji: '🍰',
-      title: 'حلويات شرقية',
-      description: 'حلويات تراثية بنكهات أصيلة',
-      category: 'حلويات'
+      src: 'https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+      alt: 'مقبلات عربية متنوعة',
+      category: 'food',
+      title: 'مقبلات شرقية',
+      description: 'تشكيلة من المقبلات الطازجة'
     },
     {
       id: 5,
-      emoji: '🍵',
-      title: 'مشروبات ساخنة',
-      description: 'تشكيلة من الشاي والقهوة العربية',
-      category: 'مشروبات'
+      src: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+      alt: 'أجواء المطعم الداخلية',
+      category: 'restaurant',
+      title: 'أجواء فاخرة',
+      description: 'تصميم داخلي أنيق ومريح'
     },
     {
       id: 6,
-      emoji: '🥙',
-      title: 'مقبلات متنوعة',
-      description: 'مجموعة رائعة من المقبلات الشهية',
-      category: 'مقبلات'
+      src: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+      alt: 'طاولات المطعم',
+      category: 'restaurant',
+      title: 'قاعة الطعام',
+      description: 'طاولات مريحة وإضاءة مثالية'
+    },
+    {
+      id: 7,
+      src: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+      alt: 'حمص بالطحينة',
+      category: 'food',
+      title: 'حمص طازج',
+      description: 'حمص كريمي بالطحينة والزيت'
+    },
+    {
+      id: 8,
+      src: 'https://images.unsplash.com/photo-1571997478779-2adcbbe9ab2f?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+      alt: 'بقلاوة بالفستق',
+      category: 'food',
+      title: 'حلويات شرقية',
+      description: 'بقلاوة طازجة بالفستق والعسل'
+    },
+    {
+      id: 9,
+      src: 'https://images.unsplash.com/photo-1559056199-641a0ac8b55e?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+      alt: 'قهوة عربية',
+      category: 'food',
+      title: 'قهوة أصيلة',
+      description: 'قهوة عربية بالهيل والزعفران'
+    },
+    {
+      id: 10,
+      src: 'https://images.unsplash.com/photo-1482049016688-2d3e1b311543?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+      alt: 'أجواء المطعم الخارجية',
+      category: 'restaurant',
+      title: 'التراس الخارجي',
+      description: 'جلسات خارجية بإطلالة رائعة'
+    },
+    {
+      id: 11,
+      src: 'https://images.unsplash.com/photo-1571407970349-bc81e7e96d47?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+      alt: 'كنافة نابلسية',
+      category: 'food',
+      title: 'كنافة طازجة',
+      description: 'كنافة بالجبنة والقطر العطر'
+    },
+    {
+      id: 12,
+      src: 'https://images.unsplash.com/photo-1511795409834-ef04bbd61622?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+      alt: 'مناسبة خاصة',
+      category: 'events',
+      title: 'احتفال عائلي',
+      description: 'لحظات مميزة مع العائلة'
     }
   ]
 
-  const openModal = (index) => {
-    setCurrentIndex(index)
-    setSelectedImage(galleryItems[index])
+  const filteredImages = activeFilter === 'all' 
+    ? galleryImages 
+    : galleryImages.filter(img => img.category === activeFilter)
+
+  const toggleFavorite = (imageId) => {
+    setFavorites(prev => 
+      prev.includes(imageId) 
+        ? prev.filter(id => id !== imageId)
+        : [...prev, imageId]
+    )
   }
 
-  const closeModal = () => {
+  const openImage = (image) => {
+    setSelectedImage(image)
+    document.body.style.overflow = 'hidden'
+  }
+
+  const closeImage = () => {
     setSelectedImage(null)
-  }
-
-  const nextImage = () => {
-    const nextIndex = (currentIndex + 1) % galleryItems.length
-    setCurrentIndex(nextIndex)
-    setSelectedImage(galleryItems[nextIndex])
-  }
-
-  const prevImage = () => {
-    const prevIndex = currentIndex === 0 ? galleryItems.length - 1 : currentIndex - 1
-    setCurrentIndex(prevIndex)
-    setSelectedImage(galleryItems[prevIndex])
+    document.body.style.overflow = 'auto'
   }
 
   return (
-    <section id="gallery" className="py-20 bg-gradient-to-br from-gray-50 to-white">
+    <section id="gallery" className="py-20 bg-gradient-to-b from-gray-50 to-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <motion.div
@@ -83,226 +146,190 @@ const Gallery = () => {
           viewport={{ once: true }}
           className="text-center mb-16"
         >
-          <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.1, duration: 0.8 }}
-            viewport={{ once: true }}
-            className="inline-flex items-center gap-3 mb-4"
+          <motion.h2
+            className="text-5xl font-bold mb-6 gradient-text"
           >
-            <Camera className="w-8 h-8 text-primary" />
-            <h2 className="text-4xl md:text-5xl font-bold gradient-text">
-              معرض الصور
-            </h2>
-          </motion.div>
-          
+            معرض الصور
+          </motion.h2>
           <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3, duration: 0.8 }}
-            viewport={{ once: true }}
-            className="text-xl text-gray-600 max-w-2xl mx-auto"
+            className="text-gray-600 text-lg max-w-2xl mx-auto leading-relaxed"
           >
-            استمتع بمشاهدة تشكيلة من أشهى الأطباق وأجمل اللحظات في مطعمنا
+            استكشف تشكيلة من أشهى الأطباق وأجواء المطعم الراقية من خلال معرض الصور التفاعلي
           </motion.p>
         </motion.div>
 
-        {/* Gallery Grid */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
-          {galleryItems.map((item, index) => (
-            <motion.div
-              key={item.id}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.1, duration: 0.6 }}
-              viewport={{ once: true }}
-              whileHover={{ 
-                scale: 1.05,
-                rotateY: 5,
-                rotateX: 5
-              }}
-              onClick={() => openModal(index)}
-              className="card-3d group cursor-pointer"
+        {/* Filter Buttons */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.2 }}
+          viewport={{ once: true }}
+          className="flex flex-wrap justify-center gap-4 mb-12"
+        >
+          <div className="flex items-center gap-2 text-gray-600 mb-4 md:mb-0">
+            <Filter className="w-5 h-5" />
+            <span className="font-medium">تصفية حسب:</span>
+          </div>
+          {filters.map((filter) => (
+            <motion.button
+              key={filter.id}
+              onClick={() => setActiveFilter(filter.id)}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className={`px-6 py-3 rounded-full font-semibold transition-all duration-300 ${
+                activeFilter === filter.id
+                  ? 'bg-primary text-white shadow-lg'
+                  : 'bg-white text-gray-700 hover:bg-gray-100 border border-gray-200'
+              }`}
             >
-              <div className="relative bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden">
-                {/* Image Container */}
-                <div className="relative h-64 bg-gradient-to-br from-primary/10 via-accent/10 to-secondary/10 flex items-center justify-center overflow-hidden">
-                  {/* Animated Background Pattern */}
-                  <motion.div
-                    animate={{ 
-                      rotate: 360,
-                      scale: [1, 1.2, 1]
-                    }}
-                    transition={{ 
-                      duration: 15,
-                      repeat: Infinity,
-                      ease: "linear"
-                    }}
-                    className="absolute inset-0 opacity-20"
-                  >
-                    <div className="w-full h-full bg-gradient-to-br from-primary to-secondary transform rotate-12 scale-150" />
-                  </motion.div>
-                  
-                  {/* Main Food Emoji */}
-                  <motion.div
-                    animate={{ 
-                      rotate: [0, 10, -10, 0],
-                      scale: [1, 1.1, 1]
-                    }}
-                    transition={{ 
-                      duration: 4,
-                      repeat: Infinity,
-                      ease: "easeInOut"
-                    }}
-                    className="relative z-10 text-8xl group-hover:scale-110 transition-transform duration-300"
-                  >
-                    {item.emoji}
-                  </motion.div>
-                  
-                  {/* Floating Decorative Elements */}
-                  {[1, 2, 3].map((particle) => (
-                    <motion.div
-                      key={particle}
-                      animate={{ 
-                        y: [0, -20, 0],
-                        x: [0, particle * 5, -particle * 5, 0],
-                        rotate: [0, 360],
-                        opacity: [0.3, 1, 0.3]
-                      }}
-                      transition={{ 
-                        duration: 3 + particle,
-                        repeat: Infinity,
-                        delay: particle * 0.5,
-                        ease: "easeInOut"
-                      }}
-                      className={`absolute text-2xl ${
-                        particle === 1 ? 'top-4 right-4' :
-                        particle === 2 ? 'bottom-6 left-6' :
-                        'top-12 left-12'
-                      }`}
-                    >
-                      {particle === 1 ? '✨' : particle === 2 ? '🌟' : '💫'}
-                    </motion.div>
-                  ))}
+              {filter.name}
+            </motion.button>
+          ))}
+        </motion.div>
 
-                  {/* Hover Overlay */}
-                  <motion.div
-                    initial={{ opacity: 0 }}
-                    whileHover={{ opacity: 1 }}
-                    className="absolute inset-0 bg-black/20 flex items-center justify-center"
-                  >
-                    <div className="text-white text-lg font-semibold bg-white/20 backdrop-blur-sm px-4 py-2 rounded-full">
-                      انقر للتكبير
-                    </div>
-                  </motion.div>
-                </div>
-
-                {/* Content */}
-                <div className="p-6">
-                  <div className="flex items-center justify-between mb-3">
-                    <h3 className="text-xl font-bold text-dark">
-                      {item.title}
+        {/* Gallery Grid */}
+        <motion.div 
+          layout
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
+        >
+          <AnimatePresence>
+            {filteredImages.map((image, index) => (
+              <motion.div
+                key={image.id}
+                layout
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.8 }}
+                transition={{ duration: 0.5, delay: index * 0.1 }}
+                whileHover={{ y: -10 }}
+                className="group relative cursor-pointer rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500"
+                style={{ aspectRatio: index % 5 === 0 ? '1/1.3' : '1/1' }}
+                onClick={() => openImage(image)}
+              >
+                <img
+                  src={image.src}
+                  alt={image.alt}
+                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                />
+                
+                {/* Overlay */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                  <div className="absolute bottom-4 right-4 left-4">
+                    <h3 className="text-white font-bold text-lg mb-1">
+                      {image.title}
                     </h3>
-                    <span className="bg-primary/10 text-primary px-3 py-1 rounded-full text-sm font-medium">
-                      {item.category}
-                    </span>
+                    <p className="text-gray-200 text-sm">
+                      {image.description}
+                    </p>
                   </div>
                   
-                  <p className="text-gray-600 leading-relaxed">
-                    {item.description}
-                  </p>
+                  {/* Action Buttons */}
+                  <div className="absolute top-4 right-4 flex gap-2">
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        toggleFavorite(image.id)
+                      }}
+                      className="bg-white/20 backdrop-blur-sm hover:bg-white/30 transition-colors duration-300 rounded-full p-2"
+                    >
+                      <Heart 
+                        className={`w-5 h-5 transition-colors ${
+                          favorites.includes(image.id) 
+                            ? 'text-red-400 fill-current' 
+                            : 'text-white'
+                        }`} 
+                      />
+                    </button>
+                    <div className="bg-white/20 backdrop-blur-sm rounded-full p-2">
+                      <ZoomIn className="w-5 h-5 text-white" />
+                    </div>
+                  </div>
                 </div>
-              </div>
-            </motion.div>
-          ))}
-        </div>
+              </motion.div>
+            ))}
+          </AnimatePresence>
+        </motion.div>
 
-        {/* View More Button */}
+        {/* Load More Button */}
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.4 }}
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          transition={{ duration: 0.8, delay: 0.5 }}
           viewport={{ once: true }}
-          className="text-center"
+          className="text-center mt-12"
         >
           <motion.button
-            whileHover={{ 
-              scale: 1.05,
-              boxShadow: "0 20px 40px rgba(217, 119, 6, 0.3)"
-            }}
+            whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            className="bg-gradient-to-r from-primary to-secondary text-white px-12 py-4 rounded-full font-bold text-lg shadow-lg hover:shadow-2xl transition-all duration-300 flex items-center gap-3 mx-auto"
+            className="bg-gradient-to-r from-primary to-secondary text-white font-bold px-8 py-3 rounded-full hover:shadow-lg transition-all duration-300"
           >
-            <Camera className="w-6 h-6" />
             عرض المزيد من الصور
           </motion.button>
         </motion.div>
       </div>
 
-      {/* Modal */}
+      {/* Image Modal */}
       <AnimatePresence>
         {selectedImage && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.3 }}
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm"
-            onClick={closeModal}
+            className="fixed inset-0 bg-black/90 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+            onClick={closeImage}
           >
             <motion.div
-              initial={{ scale: 0.8, opacity: 0 }}
+              initial={{ scale: 0.5, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.8, opacity: 0 }}
-              transition={{ duration: 0.3 }}
-              className="relative bg-white rounded-2xl shadow-2xl max-w-4xl mx-4 overflow-hidden"
+              exit={{ scale: 0.5, opacity: 0 }}
+              className="relative max-w-5xl max-h-[90vh] w-full"
               onClick={(e) => e.stopPropagation()}
             >
-              {/* Close Button */}
-              <button
-                onClick={closeModal}
-                className="absolute top-4 right-4 z-10 bg-white/90 hover:bg-white rounded-full p-2 shadow-lg transition-colors duration-200"
-              >
-                <X className="w-6 h-6" />
-              </button>
-
-              {/* Navigation Buttons */}
-              <button
-                onClick={prevImage}
-                className="absolute left-4 top-1/2 -translate-y-1/2 z-10 bg-white/90 hover:bg-white rounded-full p-2 shadow-lg transition-colors duration-200"
-              >
-                <ChevronLeft className="w-6 h-6" />
-              </button>
+              <img
+                src={selectedImage.src}
+                alt={selectedImage.alt}
+                className="w-full h-full object-contain rounded-2xl"
+              />
               
-              <button
-                onClick={nextImage}
-                className="absolute right-4 top-1/2 -translate-y-1/2 z-10 bg-white/90 hover:bg-white rounded-full p-2 shadow-lg transition-colors duration-200"
-              >
-                <ChevronRight className="w-6 h-6" />
-              </button>
-
-              {/* Image */}
-              <div className="h-96 bg-gradient-to-br from-primary/10 to-secondary/10 flex items-center justify-center">
-                <div className="text-9xl">
-                  {selectedImage.emoji}
-                </div>
-              </div>
-
-              {/* Content */}
-              <div className="p-8">
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-2xl font-bold text-dark">
-                    {selectedImage.title}
-                  </h3>
-                  <span className="bg-primary/10 text-primary px-4 py-2 rounded-full font-medium">
-                    {selectedImage.category}
-                  </span>
-                </div>
-                
-                <p className="text-gray-600 text-lg leading-relaxed">
+              {/* Image Info */}
+              <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-6 rounded-b-2xl">
+                <h3 className="text-white text-2xl font-bold mb-2">
+                  {selectedImage.title}
+                </h3>
+                <p className="text-gray-200">
                   {selectedImage.description}
                 </p>
               </div>
+
+              {/* Action Buttons */}
+              <div className="absolute top-4 right-4 flex gap-3">
+                <button
+                  onClick={() => toggleFavorite(selectedImage.id)}
+                  className="bg-white/20 backdrop-blur-sm hover:bg-white/30 transition-colors duration-300 rounded-full p-3"
+                >
+                  <Heart 
+                    className={`w-6 h-6 transition-colors ${
+                      favorites.includes(selectedImage.id) 
+                        ? 'text-red-400 fill-current' 
+                        : 'text-white'
+                    }`} 
+                  />
+                </button>
+                <button className="bg-white/20 backdrop-blur-sm hover:bg-white/30 transition-colors duration-300 rounded-full p-3">
+                  <Share2 className="w-6 h-6 text-white" />
+                </button>
+                <button className="bg-white/20 backdrop-blur-sm hover:bg-white/30 transition-colors duration-300 rounded-full p-3">
+                  <Download className="w-6 h-6 text-white" />
+                </button>
+              </div>
+
+              {/* Close Button */}
+              <button
+                onClick={closeImage}
+                className="absolute top-4 left-4 bg-white/20 backdrop-blur-sm hover:bg-white/30 transition-colors duration-300 rounded-full p-3"
+              >
+                <X className="w-6 h-6 text-white" />
+              </button>
             </motion.div>
           </motion.div>
         )}
