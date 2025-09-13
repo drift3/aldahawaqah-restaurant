@@ -7,5 +7,10 @@ export default defineConfig({
   server: {
     port: 3000,
     host: true
+  },
+  base: '/aldahawaqah-restaurant/',
+  build: {
+    outDir: 'dist',
+    assetsDir: 'assets',
   }
 })
